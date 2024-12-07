@@ -59,13 +59,13 @@ st.markdown("""
             padding: 10px 20px;
         }
         .stImage>img {
-            border: 10px solid #4CAF50;  /* Unique green border */
-            border-radius: 20px;          /* Rounded corners for uniqueness */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);  /* Soft shadow for depth */
-            transition: transform 0.3s ease-in-out;  /* Add animation for effect */
+            border: 10px solid #4CAF50;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
         }
         .stImage>img:hover {
-            transform: scale(1.05);  /* Zoom effect on hover */
+            transform: scale(1.05);
         }
         .result {
             font-family: 'Arial', sans-serif;
@@ -75,6 +75,19 @@ st.markdown("""
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .footer {
+            font-family: 'Arial', sans-serif;
+            font-size: 16px;
+            color: #888;
+            margin-top: 50px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 10px 0;
+            border-top: 1px solid #ccc;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -97,3 +110,11 @@ if uploaded_file:
     # Display result with confidence
     st.markdown(f"<div class='result'><strong>The predicted rice type is: </strong>{predicted_class}</div>", unsafe_allow_html=True)
     st.markdown(f"<div class='result'><strong>Confidence: </strong>{confidence:.2f}%</div>", unsafe_allow_html=True)
+
+# Footer for project leader details
+st.markdown("""
+    <div class="footer">
+        <strong>Project Leader:</strong> Ravella Vikhil <br>
+        <strong>Email:</strong> <a href="mailto:ravellavikhil2004@gmail.com">ravellavikhil2004@gmail.com</a>
+    </div>
+""", unsafe_allow_html=True)

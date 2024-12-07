@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 
 # Load model
-model = load_model(r"C:\Users\ravel\Desktop\wst\ML\rice1_classifier_model_with_rmsprop.h5")
+model = load_model("model/rice1_classifier_model_with_rmsprop.h5")
 
 # Class labels
 class_labels = ['ardorio', 'basmati', 'ipsala', 'jasmine', 'karacadag']

@@ -78,7 +78,7 @@
 Uploaded Image:
 <img src="C:\Users\ravel\Downloads\1121-basmati-rice-seeds.jpg" alt="Rice Image" style="max-width: 100%; height: auto;">
 The predicted rice type is: Basmati
-Confidence: 98%
+Confidence: 43%
 </pre>
 
 <h4>Contributing</h4>

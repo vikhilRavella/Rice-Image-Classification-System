@@ -8,6 +8,16 @@ from PIL import Image
 
 # Load Pretrained Model
 model = tf.keras.models.load_model("rice_classification_model.h5")
+import gdown
+import tensorflow as tf
+import os
+
+model_path = "rice_classification_model.h5"
+if not os.path.exists(model_path):
+    url = "https://drive.google.com/uc?id=1A2B3C4D5E6F7G8H"
+    gdown.download(url, model_path, quiet=False)
+
+model = tf.keras.models.load_model(model_path)
 
 # Define Rice Class Labels
 class_names = ['Arborio', 'Basmati', 'Ipsala', 'Jasmine', 'Karacadag']

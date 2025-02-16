@@ -1,10 +1,9 @@
- streamlit
- tensorflow
- numpy 
- pandas 
- matplotlib 
- scikit-learn 
- opencv-python 
- Pillow 
- h5py
-
+streamlit
+tensorflow
+numpy
+pandas
+matplotlib
+scikit-learn
+opencv-python-headless
+Pillow
+h5py

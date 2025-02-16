@@ -1,4 +1,4 @@
-# Rice Image Classification System
+#Rice Classification Model
 
 ## Overview
 This project, developed as part of my AI Internship experience, aims to build a **Rice Image Classification System** using **machine learning techniques**. The system is designed to classify images of rice into different categories based on predefined labels. The project leverages **Convolutional Neural Networks (CNNs)** to accurately classify rice varieties, helping automate agricultural processes such as quality control and classification.

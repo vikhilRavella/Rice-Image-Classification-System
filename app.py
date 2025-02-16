@@ -12,10 +12,9 @@ import gdown
 import tensorflow as tf
 import os
 
-model_path = "rice_classification_model.h5"
-if not os.path.exists(model_path):
-    url = "https://drive.google.com/file/d/18WPJaUejS7UFoBcdtfxNZf4fKVosbQZn/view?usp=drive_link"
-    gdown.download(url, model_path, quiet=False)
+
+url = "https://drive.google.com/file/d/18WPJaUejS7UFoBcdtfxNZf4fKVosbQZn/view?usp=drive_link"
+gdown.download(url, model_path, quiet=False)
 
 model = tf.keras.models.load_model(model_path)
 

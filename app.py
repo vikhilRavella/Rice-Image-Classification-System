@@ -12,9 +12,9 @@ import gdown
 import tensorflow as tf
 import os
 
-
-url = "https://drive.google.com/file/d/18WPJaUejS7UFoBcdtfxNZf4fKVosbQZn/view?usp=drive_link"
-gdown.download(url, model_path, quiet=False)
+# Replace with your actual GitHub Release download link
+MODEL_URL = "https://github.com/vikhilRavella/Rice-Image-Classification-System/releases/download/v1.0/rice_classification_model.h5"
+MODEL_PATH = "rice_classification_model.h5"
 
 model = tf.keras.models.load_model(model_path)
 

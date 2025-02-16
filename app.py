@@ -10,8 +10,12 @@ import os
 
 MODEL_PATH = "rice_classification_model.h5"
 
+MODEL_PATH = "rice_classification_model.h5"
+
+st.title("Rice Classification Model Checker")
+
 if os.path.exists(MODEL_PATH):
-    print("Model file exists.")
-    print("File size:", os.path.getsize(MODEL_PATH), "bytes")
+    file_size = os.path.getsize(MODEL_PATH)
+    st.success(f"✅ Model file exists.\n📁 File size: {file_size / (1024*1024):.2f} MB")
 else:
-    print("Model file is missing!")
+    st.error("❌ Model file is missing! Please upload or check the file path.")

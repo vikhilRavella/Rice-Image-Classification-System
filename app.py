@@ -1,120 +1,82 @@
 import streamlit as st
-from tensorflow.keras.models import load_model
+import cv2
 import numpy as np
-from PIL import Image
+import tensorflow as tf
+import matplotlib.pyplot as plt
+from collections import Counter
+from PIL import Image    
 
-# Load model
-model = load_model("model/rice1_classifier_model_with_rmsprop.h5")
+# Load Pretrained Model
+model = tf.keras.models.load_model("rice_classification_model.h5")
 
-# Class labels
-class_labels = ['ardorio', 'basmati', 'ipsala', 'jasmine', 'karacadag']
+# Define Rice Class Labels
+class_names = ['Arborio', 'Basmati', 'Ipsala', 'Jasmine', 'Karacadag']
 
-# Function to predict rice type
-def predict_rice(image_file):
-    # Open the uploaded image
-    img = Image.open(image_file)
+def is_blurry(image):
+    """Detect if an image is blurry using Laplacian variance."""
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    variance = cv2.Laplacian(gray, cv2.CV_64F).var()
+    return variance < 100  
+
+def detect_rice_grains(image):
+    """Detect rice grains in an image using contour detection."""
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    thresh = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                   cv2.THRESH_BINARY_INV, 11, 2)
+    contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    rice_grains = [c for c in contours if 500 < cv2.contourArea(c) < 50000]
+    return rice_grains
+
+def extract_and_predict_rice_grains(image):
+    """Extract and classify rice grains from an image."""
+    if is_blurry(image):
+        return "Blurry Image", None
     
-    # Convert RGBA to RGB if the image has 4 channels
-    if img.mode == 'RGBA':
-        img = img.convert('RGB')
-    
-    # Resize and preprocess the image
-    img = img.resize((224, 224))  # Adjust to your model's input size
-    img_array = np.array(img) / 255.0  # Normalize pixel values (if model expects normalized input)
-    
-    # Ensure the image has 3 channels (RGB)
-    if img_array.shape[-1] == 1:  # If the image is grayscale, convert it to RGB
-        img_array = np.repeat(img_array, 3, axis=-1)
+    rice_grains = detect_rice_grains(image)
+    if len(rice_grains) < 2:
+        return None, None
 
-    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
-    
-    # Make prediction
-    prediction = model.predict(img_array)
-    
-    # Get the predicted class index and the confidence (probability)
-    predicted_class_index = np.argmax(prediction)
-    predicted_class = class_labels[predicted_class_index]
-    confidence = prediction[0][predicted_class_index] * 100  # Confidence percentage
-    
-    return predicted_class, confidence
+    rice_images = []
 
-# Streamlit UI with custom CSS
-st.markdown("""
-    <style>
-        .stTitle {
-            font-family: 'Arial', sans-serif;
-            color: #4CAF50;
-            font-size: 30px;
-        }
-        .stText {
-            font-family: 'Arial', sans-serif;
-            color: #555;
-            font-size: 18px;
-        }
-        .stButton>button {
-            background-color: #4CAF50;
-            color: white;
-            font-size: 18px;
-            border-radius: 8px;
-            padding: 10px 20px;
-        }
-        .stImage>img {
-            border: 10px solid #4CAF50;
-            border-radius: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-        }
-        .stImage>img:hover {
-            transform: scale(1.05);
-        }
-        .result {
-            font-family: 'Arial', sans-serif;
-            font-size: 18px;
-            color: #333;
-            background-color: #f0f0f0;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .footer {
-            font-family: 'Arial', sans-serif;
-            font-size: 16px;
-            color: #888;
-            margin-top: 50px;
-            text-align: center;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: #ffffff;
-            padding: 10px 0;
-            border-top: 1px solid #ccc;
-        }
-    </style>
-""", unsafe_allow_html=True)
+    for contour in rice_grains:
+        x, y, w, h = cv2.boundingRect(contour)
+        grain_cropped = image[y:y+h, x:x+w]
+        grain_resized = cv2.resize(grain_cropped, (150, 150))
+        rice_images.append(grain_resized)
 
-# Streamlit app content
-st.title("Rice Type Classifier", anchor="stTitle")
-st.write("Upload a rice image to classify.", anchor="stText")
+    if not rice_images:
+        return None, None
 
-# File uploader
-uploaded_file = st.file_uploader("Choose an image file", type=["jpg", "png", "jpeg"])
-
-# Process uploaded file
-if uploaded_file:
-    # Display the uploaded image with unique style
-    st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
+    rice_images = np.array(rice_images) / 255.0
+    rice_images = np.expand_dims(rice_images, axis=-1) * np.ones(3, dtype=int)  # Convert grayscale to 3-channel
     
-    # Make prediction
-    predicted_class, confidence = predict_rice(uploaded_file)
-    
-    # Display result with confidence
-    st.markdown(f"<div class='result'><strong>The predicted rice type is: </strong>{predicted_class}</div>", unsafe_allow_html=True)
-    st.markdown(f"<div class='result'><strong>Confidence: </strong>{confidence:.2f}%</div>", unsafe_allow_html=True)
+    predictions = model.predict(rice_images)
+    predicted_classes = [np.argmax(pred) for pred in predictions]
+    most_common_class = Counter(predicted_classes).most_common(1)[0][0]
+    best_class_name = class_names[most_common_class]
 
-# Footer for project leader details
-st.markdown("""
-    <div class="footer">
-        <strong>Project Leader:</strong> Ravella Vikhil <br>
-        <strong>Email:</strong> <a href="mailto:ravellavikhil2004@gmail.com">ravellavikhil2004@gmail.com</a>
-    </div>
-""", unsafe_allow_html=True)
+    rice_grain_uint8 = (rice_images[0] * 255).astype(np.uint8)
+    rice_grain_uint8 = cv2.cvtColor(rice_grain_uint8, cv2.COLOR_RGB2BGR)
+
+    return best_class_name, rice_grain_uint8
+
+# Streamlit App
+st.title("🍚 Rice Grain Classifier")
+uploaded_file = st.file_uploader("Upload a rice image", type=["jpg", "png", "jpeg"])
+
+if uploaded_file is not None:
+    image = Image.open(uploaded_file)
+    image = np.array(image)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # Convert to BGR for OpenCV
+
+    best_rice_class, rice_grain_image = extract_and_predict_rice_grains(image)
+
+    if best_rice_class and rice_grain_image is not None:
+        col1, col2 = st.columns(2)
+        with col1:
+            st.image(uploaded_file, caption="📷 Uploaded Image", use_column_width=True)
+        with col2:
+            st.image(rice_grain_image, caption=f"🔍 Predicted: {best_rice_class}", use_column_width=True)
+        st.success(f"✅ Best Predicted Rice Class: {best_rice_class}")
+    else:
+        st.error("❌ No valid rice grains detected. Please upload a clear rice image.")

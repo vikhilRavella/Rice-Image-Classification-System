@@ -6,14 +6,12 @@ import tensorflow as tf
 MODEL_URL = "https://github.com/vikhilRavella/Rice-Image-Classification-System/releases/download/v1.0/rice_classification_model.h5"
 MODEL_PATH = "rice_classification_model.h5"
 
-# Download the model if it doesn't exist locally
-if not os.path.exists(MODEL_PATH):
-    print("Downloading model...")
-    response = requests.get(MODEL_URL, stream=True)
-    with open(MODEL_PATH, "wb") as f:
-        for chunk in response.iter_content(chunk_size=8192):
-            f.write(chunk)
-    print("Download complete!")
+import os
 
-# Load the model
-model = tf.keras.models.load_model(MODEL_PATH)
+MODEL_PATH = "rice_classification_model.h5"
+
+if os.path.exists(MODEL_PATH):
+    print("Model file exists.")
+    print("File size:", os.path.getsize(MODEL_PATH), "bytes")
+else:
+    print("Model file is missing!")

@@ -82,7 +82,7 @@ Confidence: 98.94%
 ```
 
 Alternatively, try the **Streamlit Lite Web App**:
-👉 [Rice Classification System](https://rice-image-classification-system-daidfcpp99qti99smk7eyh.streamlit.app/)
+👉 [Rice Classification System]([https://rice-image-classification-system-daidfcpp99qti99smk7eyh.streamlit.app/](https://huggingface.co/spaces/vikhil99/rice-classification))
 
 ## Results
 The model achieved the following performance metrics:

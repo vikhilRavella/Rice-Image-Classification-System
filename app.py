@@ -7,6 +7,7 @@ MODEL_URL = "https://github.com/vikhilRavella/Rice-Image-Classification-System/r
 MODEL_PATH = "rice_classification_model.h5"
 
 import os
+import streamlit as st
 
 MODEL_PATH = "rice_classification_model.h5"
 

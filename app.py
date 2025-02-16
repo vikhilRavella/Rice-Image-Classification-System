@@ -16,7 +16,7 @@ import os
 MODEL_URL = "https://github.com/vikhilRavella/Rice-Image-Classification-System/releases/download/v1.0/rice_classification_model.h5"
 MODEL_PATH = "rice_classification_model.h5"
 
-model = tf.keras.models.load_model(model_path)
+model = tf.keras.models.load_model(MODEL_PATH)
 
 # Define Rice Class Labels
 class_names = ['Arborio', 'Basmati', 'Ipsala', 'Jasmine', 'Karacadag']

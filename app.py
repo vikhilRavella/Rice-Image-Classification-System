@@ -7,7 +7,7 @@ from collections import Counter
 from PIL import Image    
 
 # Load Pretrained Model
-model = tf.keras.models.load_model("rice_classification_model.h5")
+
 import gdown
 import tensorflow as tf
 import os
